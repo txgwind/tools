@@ -76,8 +76,7 @@ class ToolsController extends Controller
         define("ROTE_PATH", $root);
         $file = ROTE_PATH . "./../api.php";
         $api = Util::getapiArr($file);
-//        print_r($code);
-//        exit();
+
         $rote = Util::getRoteArr(ROTE_PATH);
 
         $data["code"] = $code;
@@ -87,6 +86,8 @@ class ToolsController extends Controller
         $data["root"] = $root;
         $data["act"] = "config";
         $data["width"] = "90%";
+//                print_r($data);
+//        exit();
         $data["doc"] = view('tools.text', $data);
         return view('tools.doc', $data);
     }

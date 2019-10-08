@@ -7,7 +7,7 @@
         <tbody>
         <tr>
             <td class="confluenceTd">请求地址</td>
-            <td class="confluenceTd">{{$code['address']}}</td>
+            <td class="confluenceTd">{{$code['api_address']}}</td>
         </tr>
         <tr>
             <td class="confluenceTd">请求方法</td>

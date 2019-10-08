@@ -149,6 +149,8 @@ class Util
                 $code['code']['need'][] = [$out[1],$out[1],'string','是',$out[1],self::getMaskName($out[1])];
 
             }
+            $arr = explode("/",$code['address']);
+            $code['api_address'] = "/".$arr[2].'/'.strtolower($code['method']);
         }
 
 //        print_r($code);

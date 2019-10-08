@@ -98,7 +98,7 @@
                 控制文件：<select name="data['ctl']" id="controller_name" name="conttroller" onchange="useRote(this)">
                     <option value="">请选择控制器</option>
                 </select> 接口预设: <input style="width:700px" type="text" name="rote_set"
-                                       value="    $route_dispatch->addRoute('{{$code['params']}}', '{{$code['address']}}', 'AdController{{'@'}}{{$code['method']}}');"/>
+                                       value="    $route_dispatch->addRoute('{{$code['params']}}', '{{$code['api_address']}}', 'AdController{{'@'}}{{$code['method']}}');"/>
 </td><td>
                 <a style="display:none" href="javascript:insertCode('rote');">插入rote文件</a></td>
         </tr>
