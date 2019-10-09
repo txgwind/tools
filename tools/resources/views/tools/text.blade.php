@@ -1,6 +1,6 @@
 <h2>+++++++++++++文档开始+++++++++++++</h2><a id="tocopy" href="javascript:void();">复制</a>
 <div id="maindoc">
-<h1>修改星球</h1>
+<h1>{{$code['title']}}</h1>
 <p><span> 基本信息：</span></p>
 <div class="table-wrap">
     <table class="confluenceTable">

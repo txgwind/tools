@@ -203,11 +203,13 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
         </tr>
 
         <tr>
-            <td><input id="act" name="act" value="" type="hidden">
+            <td colspan="3"><input id="act" name="act" value="" type="hidden">
                 {{ csrf_field() }}
                 <input id="root" name="root" value="{{$root}}" type="hidden">
-                <input type="button" value="执行"/> <input onclick="location.href='./index.php?time='+(new date())"
-                                                         type="button" value="返回"/></td>
+                接口示例: <a target="_blank"
+                        v="@if(!empty($code['code']['need']))@foreach($code['code']['need'] as $key=>$item){{$item[4]}}={{$key}}&@endforeach @endif @if(!empty($code['code']['noneed']))@foreach($code['code']['noneed'] as $key=>$item){{$item[4]}}={{$key}}&@endforeach @endif"
+                        id="api_test" ></a>
+                </td>
         </tr>
     </table>
 </form>
@@ -221,6 +223,7 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
         var arr = config.split(",");
         arr[0] = arr[0].split(":")[0]+":"+end;
         $("#config").val(arr.join(","));
+
     }
     function insetApi() {
 
@@ -252,6 +255,8 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
 
         arr[1] = arr[1].split(":")[0]+":\""+name+"\"";
         $("#config").val(arr.join(","));
+        var link = "http://api.17k.com/"+$('#rote').find("option:selected").text().replace(".php","")+"{{$code['api_address']}}?"+ $('#api_test').attr('v')+"&appKey=4037461542&accessToken=4322&__flush_cache=1";
+        $('#api_test').attr("href",link).text(link);
     }
     function useRote(obj) {
         var data = $(obj).val();
