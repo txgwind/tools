@@ -82,10 +82,11 @@ class Util
             if (strrpos($item, $find) !== false) {
                 $code[$name] = strtoupper(trim(str_replace($find, "", $item)));
             }
-            if ($key > 14) {
-                $p = "/^([a-zA-Z]+)[\s]+(string|int)+[\s]+(是|否)+[\s]+.+$/i";
+            if ($key > 11) {
+                $p = "/^([a-zA-Z]+)[\s]+(string|int|JSON)+[\s]+(是|否)+[\s]+.+$/i";
 //            $item = trim($item);
                 preg_match($p, $item, $match);
+//                die($item);
                 if (!empty($match)) {
                     $p2 = "/^.*[\s]+(是|否)[\s]+(.*)$/i";
                     preg_match($p2,$match[0], $match5);

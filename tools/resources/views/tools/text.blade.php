@@ -7,7 +7,7 @@
         <tbody>
         <tr>
             <td class="confluenceTd">请求地址</td>
-            <td class="confluenceTd">{{$code['api_address']}}</td>
+            <td id="doc_api" v="{{$code['api_address']}}" class="confluenceTd">{{$code['api_address']}}</td>
         </tr>
         <tr>
             <td class="confluenceTd">请求方法</td>
@@ -40,7 +40,7 @@
                 <td class="confluenceTd"><span>{{$item[4]}}</span></td>
                 <td class="confluenceTd"><span>{{$item[2]}}</span></td>
                 <td class="confluenceTd"><span>{{$item[3]}}</span></td>
-                <td class="confluenceTd"><span>{{substr($item[5],2,100)}}</span></td>
+                <td class="confluenceTd"><span>{{$item[5]}}</span></td>
             </tr>
         @endforeach
         @endif
@@ -50,7 +50,7 @@
                 <td class="confluenceTd"><span>{{$item[4]}}</span></td>
                 <td class="confluenceTd"><span>{{$item[2]}}</span></td>
                 <td class="confluenceTd"><span>{{$item[3]}}</span></td>
-                <td class="confluenceTd"><span>{{substr($item[5],2,100)}}</span></td>
+                <td class="confluenceTd"><span>{{$item[5]}}</span></td>
             </tr>
         @endforeach
         @endif

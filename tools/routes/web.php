@@ -26,6 +26,12 @@ Route::get('/tools/sql', 'ToolsController@sql');
 Route::get('/tools/api', function (){
     return view('tools.api');
 });
+Route::get('/tools/post', function (){
+    return view('tools.post');
+});
+
+Route::post('/tools/postParse','ToolsController@postParse');
+
 Route::post('/tools/insterCode', 'ToolsController@insterCode');
 
 Route::post('/tools/apiresult', 'ToolsController@apiresult');

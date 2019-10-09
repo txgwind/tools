@@ -21,7 +21,7 @@
     <textarea onblur="getMethod(this)" style="width:80%;height:500px" name="doc"></textarea><br><br>
     <input name="act" value="parse" type="hidden">
     @csrf
-    <p>　项目地址：<input style="width:50%" name="root" value="E:\\www\\server-spring-php-api\\config\\route"></p>
+    <p>　项目地址：<input style="width:50%" name="root" value="/mnt/e/www/server-spring-php-api/config/route"></p>
     <p>控制层名称：<input id="ctname" style="width:50%" name="ctname" value=""></p>
     <input id="submit" type="submit" disabled/>
 </form>

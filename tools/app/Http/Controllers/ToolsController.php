@@ -172,4 +172,25 @@ class ToolsController extends Controller
 
     }
 
+    public function postParse(Request $request){
+
+        $doc = $request->get('doc');
+        $arr = explode("\r\n",$doc);
+        $p = "/\((\"|')?([a-zA-Z0-9_-]*)(\"|')?/i";
+        foreach ($arr as $key=>$list){
+            $list = trim($list);
+            preg_match($p,$list,$out);
+            if(!empty($out)&& $out[2]!=""){
+                $data['code'][] = [$out[2],"测试-".$key];
+            }
+        }
+//        print_r($data);
+//
+//        exit();
+
+        $data['api'] =$request->get('api')."?".$request->get('params');
+//        print_r($data);
+        return view('tools.postparse', $data);
+    }
+
 }

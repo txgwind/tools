@@ -197,7 +197,7 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
     {
         $search['offset'] = ($page - 1) * $num;
         $search['num'] = $num;
-        return $this->getData('{{$code['params']}}', '{{$code['method']}}',$search);
+        return $this->getData('{{strtolower($code['params'])}}', '{{$code['method']}}',$search);
     }
                 </textarea></td><td><a href="javascript:insertCode('impl');">插入model文件</a></td></td>
         </tr>
@@ -206,7 +206,7 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
             <td colspan="3"><input id="act" name="act" value="" type="hidden">
                 {{ csrf_field() }}
                 <input id="root" name="root" value="{{$root}}" type="hidden">
-                接口示例: <a target="_blank"
+                接口示例: <a style="font-size: 12px" target="_blank"
                         v="@if(!empty($code['code']['need']))@foreach($code['code']['need'] as $key=>$item){{$item[4]}}={{$key}}&@endforeach @endif @if(!empty($code['code']['noneed']))@foreach($code['code']['noneed'] as $key=>$item){{$item[4]}}={{$key}}&@endforeach @endif"
                         id="api_test" ></a>
                 </td>
@@ -257,6 +257,9 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
         $("#config").val(arr.join(","));
         var link = "http://api.17k.com/"+$('#rote').find("option:selected").text().replace(".php","")+"{{$code['api_address']}}?"+ $('#api_test').attr('v')+"&appKey=4037461542&accessToken=4322&__flush_cache=1";
         $('#api_test').attr("href",link).text(link);
+        var cname = $('#rote').find("option:selected").text().replace(".php","");
+        $("#doc_api").text("/"+cname+$("#doc_api").attr("v"));
+
     }
     function useRote(obj) {
         var data = $(obj).val();
@@ -274,6 +277,12 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
         arr[4] = arr[4].split(":")[0]+":\"/"+filename+"/impl/"+name.replace("Controller","Model.php")+"\"";
 
         $("#config").val(arr.join(","));
+
+
+//        var cname = name.replace("Controller","");
+//        var controller = $('#controller').val().match("/ (.*)Validator/ig");
+//        alert(controller);
+//        $('#controller').val(controller);
     }
 
 
