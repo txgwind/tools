@@ -146,10 +146,10 @@ return MobileValidator::check($input, $rules, $messages);
 @foreach($code['code']['need'] as $key=>$item)
 $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,@if( strtolower($item[2])=="int" ) true @else false @endif);
         @endforeach
-        @endif
-        @if(!empty($code['code']['noneed']))
+@endif @if(!empty($code['code']['noneed']))
+
         // 获取非必传参数
-@foreach($code['code']['noneed'] as $key=>$item)
+        @foreach($code['code']['noneed'] as $key=>$item)
 $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2])=="int"?true:false}});
         @endforeach
         @endif
@@ -171,10 +171,9 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
 
 
     public $fields_map = [
-
 @if(!empty($code['code']['need']))
         @foreach($code['code']['need'] as $key=>$item)
-    '{{$item[4]}}' => '{{$item[1]}}',{{$item[5]}}
+        '{{$item[4]}}' => '{{$item[1]}}',{{$item[5]}}
         @endforeach
         @endif
 @if(!empty($code['code']['noneed']))

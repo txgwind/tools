@@ -93,10 +93,10 @@ class Util
                     $match[5] = empty($match5)?"":"//".$match5[2];
                     if ($match[3] == '是') {
                         $match[4] = self::getMaskName($match[1]);
-                        $code['code']['need'][] = $match;
+                        $code['code']['need'][$match[1]] = $match;
                     } else {
                         $match[4] = self::getMaskName($match[1]);
-                        $code['code']['noneed'][] = $match;
+                        $code['code']['noneed'][$match[1]] = $match;
                     }
                 } else {
                     $part2 = "/^([a-zA-Z]+).*$/i";
@@ -107,9 +107,9 @@ class Util
                             preg_match($p, $temp, $match2);
                             if (!empty($match2)) {
                                 if ($match2[3] == '是') {
-                                    $code['code']['need'][] = $match2;
+                                    $code['code']['need'][$match2[1]] = $match2;
                                 } else {
-                                    $code['code']['noneed'][] = $match2;
+                                    $code['code']['noneed'][$match2[1]] = $match2;
                                 }
                                 $temp = $item;
                                 $deal = 0;
@@ -145,7 +145,7 @@ class Util
         if(!empty($code['address'])){
             $p = "/\{([a-zA-Z_-]+)\}/i";
             preg_match($p,$code['address'],$out);
-            if(!empty($out)){
+            if(!empty($out) && !isset($code['code']['need'][$out[1]])){
                 $code['code']['need'][] = [$out[1],$out[1],'string','是',$out[1],self::getMaskName($out[1])];
 
             }
