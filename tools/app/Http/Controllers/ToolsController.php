@@ -435,9 +435,9 @@ class ToolsController extends Controller
                             return $var[0];
                         }
                     });
-//                    print_r($ckstr[0]);
-//                    exit();
-                    preg_match("/accessToken=id=(\d+)&/i", urldecode($ckstr[0]), $coockie);
+                    self::$firephp->fb(urldecode(array_values($ckstr)[0]),
+                        'coockie',FirePHP::LOG);
+                    preg_match("/accessToken=id=(\d+)&/i", urldecode(array_values($ckstr)[0]), $coockie);
                     if (!empty($coockie)) {
                         $uid = $coockie[1];
                     }
