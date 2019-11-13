@@ -26,6 +26,7 @@
         <tbody>
         <tr>
             <th class="confluenceTh"><span>接口名称</span></th>
+            <th class="confluenceTh"><span>api</span></th>
             <th class="confluenceTh"><span>接口地址</span></th>
             <th class="confluenceTh"><span>类型</span></th>
             <th class="confluenceTh"><span>耗时</span></th>
@@ -36,6 +37,7 @@
             @foreach($data as $key=>$item)
                 <tr>
                     <td class="confluenceTd">{{$item['api_doc']}}</td>
+                    <td class="confluenceTd">{{$item['api']}}</td>
                     <td class="confluenceTd"><a alter="{{$item['url']}}"  href="{{$item['url']}}" target="_blank">{{substr($item['url'],0,60)}}</a></td>
                     <td class="confluenceTd">{{$item['method']}}</td>
                     <td class="confluenceTd">{{$item['run_time']}}</td>
