@@ -341,7 +341,9 @@ class ToolsController extends Controller
             if (strrpos($list, $api) !== false) {
 //                echo "$list, $api";
 //                die();
-                $doc = explode(",", $list)[1];
+                $partent = "/^.*'(.*)',[\s]{0,30000}\/\/(.*)$/i";
+                preg_match($partent,$list,$out);
+                $doc = $out;
             }
             if (strrpos($list, "{") !== false) {
                 $temp = str_replace("'", "", explode("=>", explode(",", $list)[0])[1]);
@@ -349,8 +351,9 @@ class ToolsController extends Controller
                 $str2 = preg_replace("/(\d+)/", "", trim($api));
 
                 if ($str1 == $str2) {
-//                    echo " $str1 ++++ $str2===".((int)$str1 === $str2)." <br>";
-                    $doc = explode(",", $list)[1];
+                    $partent = "/^.*'(.*)',[\s]{0,30000}\/\/(.*)$/i";
+                    preg_match($partent,$list,$out);
+                    $doc = $out;
                 }
             }
         }
@@ -486,11 +489,13 @@ class ToolsController extends Controller
                 if (!empty($arr)) {
                     $arr = $arr[1];
                     $arr['api'] = explode("?", substr($arr['url'], strrpos($arr['url'], ".com") + 4))[0];
-                    $arr['api_doc'] = self::get_doc($docarr, $arr['api']);
+                    $api = self::get_doc($docarr, $arr['api']);
+                    $arr['api'] = $api[1];
+                    $arr['api_doc'] = $api[2];
                     $datas[] = $arr;
+                    unset($arr);
                 }
             }
-
             if (strrpos($list, "handler_controller") !== false) {
 
                 $handler = json_decode($list, true)[0]['Label'];

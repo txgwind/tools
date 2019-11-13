@@ -36,7 +36,7 @@
         @if(!empty($data))
             @foreach($data as $key=>$item)
                 <tr>
-                    <td class="confluenceTd">{{$item['api_doc']}}</td>
+                    <td class="confluenceTd">{{$item['api_doc']}} <a href="http://doc.corp.17k.com/dosearchsite.action?queryString={{$item['api_doc']}}" target="_blank">文档</a></td>
                     <td class="confluenceTd">{{$item['api']}}</td>
                     <td class="confluenceTd"><a alter="{{$item['url']}}"  href="{{$item['url']}}" target="_blank">{{substr($item['url'],0,60)}}</a></td>
                     <td class="confluenceTd">{{$item['method']}}</td>
