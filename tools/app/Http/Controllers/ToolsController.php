@@ -360,6 +360,9 @@ class ToolsController extends Controller
     static function get_head($sUrl, $data = [], $headers = [])
     {
 
+        if(strrpos($sUrl,"accessToken") === false){
+            $sUrl .= "accessToken=4322";
+        }
         $oCurl = curl_init();
         $header[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36';
         $header[] = 'X-FirePHP: 0.4.4';
@@ -492,6 +495,10 @@ class ToolsController extends Controller
 
                 $handler = json_decode($list, true)[0]['Label'];
             }
+        }
+        if(!isset($datas)){
+            echo $data['body'];
+            die();
         }
         self::$firephp->fb($datas,
             'datas',FirePHP::ERROR);
