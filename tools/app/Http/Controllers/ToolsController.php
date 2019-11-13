@@ -494,7 +494,7 @@ class ToolsController extends Controller
                         $arr['api'] = $api[1];
                         $arr['api_doc'] = $api[2];
                     }else{
-                        $arr['api'] = $arr['api_doc'] = "";
+                        $arr['api'] = $arr['api_doc'] = "api 代码 不是最新的";
                     }
                     $datas[] = $arr;
                     unset($arr);
