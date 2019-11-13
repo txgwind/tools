@@ -361,7 +361,7 @@ class ToolsController extends Controller
     {
 
         if(strrpos($sUrl,"accessToken") === false){
-            $sUrl .= "accessToken=4322";
+            $sUrl .= "&accessToken=4322";
         }
         $oCurl = curl_init();
         $header[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36';
