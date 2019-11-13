@@ -490,8 +490,12 @@ class ToolsController extends Controller
                     $arr = $arr[1];
                     $arr['api'] = explode("?", substr($arr['url'], strrpos($arr['url'], ".com") + 4))[0];
                     $api = self::get_doc($docarr, $arr['api']);
-                    $arr['api'] = $api[1];
-                    $arr['api_doc'] = $api[2];
+                    if(!empty($api)){
+                        $arr['api'] = $api[1];
+                        $arr['api_doc'] = $api[2];
+                    }else{
+                        $arr['api'] = $arr['api_doc'] = "";
+                    }
                     $datas[] = $arr;
                     unset($arr);
                 }
