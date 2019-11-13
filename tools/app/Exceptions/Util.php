@@ -83,7 +83,7 @@ class Util
                 $code[$name] = strtoupper(trim(str_replace($find, "", $item)));
             }
             if ($key > 11) {
-                $p = "/^([a-zA-Z]+)[\s]+(string|int|JSON)+[\s]+(是|否)+[\s]+.+$/i";
+                $p = "/^([a-zA-Z]+)[\s]+(Integer|string|int|JSON)+[\s]+(是|否)+[\s]+.+$/i";
 //            $item = trim($item);
                 preg_match($p, $item, $match);
 //                die($item);
@@ -162,7 +162,7 @@ class Util
 
     public static function getMaskName($str){
 
-        $str = strtolower(substr($str,0,round(2,3)).substr($str,strlen($str)-3));
+        $str2 = strtolower(substr($str,0,round(2,3)).substr($str,strlen($str)-3));
 
         return $str ;
     }
