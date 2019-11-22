@@ -366,12 +366,26 @@ class ToolsController extends Controller
         if(strrpos($sUrl,"accessToken") === false){
             $sUrl .= "&accessToken=4322";
         }
+        $arr = parse_url($sUrl);
+        $host = $arr['host'];
+        $ip = $_GET['toip']?$_GET['toip']:$_GET['ip'];
+        $arr['host'] = $ip;
+//        print_r($arr);
+//        http_build_url();
+//        $sUrl = self::http_build_url($arr);
+//        die();
+        $uarr = explode(".com",$sUrl);
+        $sUrl = "http://".$ip.$uarr[1];
+        self::$firephp->fb(['change->url'=>$sUrl],
+            'sUrl',FirePHP::LOG);
         $oCurl = curl_init();
         $header[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36';
         $header[] = 'X-FirePHP: 0.4.4';
         $header[] = 'X-FirePHP-Encoding: zlib-deflate';
         $header[] = 'X-FirePHP-Version: 0.4.4';
         $header[] = 'X-Wf-Max-Combined-Size: 262144';
+        $header[] = 'Cookie: APP_DEBUG=utPhoIvY$1EzyqBV;';
+        $header[] = "host: $host";
         if (!empty($headers)) {
             $header = array_merge($header, $headers);
         }
@@ -385,6 +399,11 @@ class ToolsController extends Controller
             curl_setopt($oCurl, CURLOPT_HTTPGET, 1);
             curl_setopt($oCurl, CURLOPT_POSTFIELDS, is_array($data) ? http_build_query($data) : $data);
         }
+
+
+//        var_dump( $ip);
+//        die();
+//        curl_setopt($oCurl, CURLOPT_RESOLVE,["$host:80:$ip"]);
         curl_setopt($oCurl, CURLOPT_HEADER, true);
         curl_setopt($oCurl, CURLOPT_NOBODY, false);
         curl_setopt($oCurl, CURLOPT_USERAGENT, $user_agent);
@@ -397,10 +416,23 @@ class ToolsController extends Controller
 //        die(substr($sContent, 0, $headerSize));
         $body['header'] = explode("|", substr($sContent, 0, $headerSize));
         $body['body'] = substr($sContent, $headerSize);
+        $body['ip'] = $sUrl;
         curl_close($oCurl);
         self::$firephp->fb($body,
             'body',FirePHP::LOG);
         return $body;
+    }
+
+    static function http_build_url($url_arr){
+        $new_url = $url_arr['scheme'] . "://".$url_arr['host'];
+        if(!empty($url_arr['port']))
+            $new_url = $new_url.":".$url_arr['port'];
+        $new_url = $new_url . $url_arr['path'];
+        if(!empty($url_arr['query']))
+            $new_url = $new_url . "?" . $url_arr['query'];
+        if(!empty($url_arr['fragment']))
+            $new_url = $new_url . "#" . $url_arr['fragment'];
+        return $new_url;
     }
 
     public function doServer(Request $request)
@@ -416,14 +448,14 @@ class ToolsController extends Controller
         if (substr($str, 0, 4) == "curl") {
             $params = $str;
             $h = "/-H[\s]+'([^']+)'/i";
-            $d = '/--data[\s]+"([^"]+)"/i';
-            $u = "/--compressed[\s]+'([^']+)'/i";
+            $d = '/--data(-binary)?[\s]+"([^"]+)"/i';
+            $u = "/'http(s)?:\/\/(.*)'/i";
 
             preg_match_all($h, $params, $harr);
             preg_match($d, $params, $darr);
             preg_match($u, $params, $uarr);
 //            print_r($harr);
-            //            print_r($darr);
+//                        print_r($darr);
 //            print_r($uarr);
 //            die();
             $uid = 0;
@@ -431,10 +463,12 @@ class ToolsController extends Controller
                 if (isset($harr[1][0])) {
                     $harr[1][2] = urldecode($harr[1][2]);
                     $ckstr = array_filter($harr[1], function ($var) {
-                        if (substr(trim($var), 0, 6) == "Cookie") {
+                        if (strrpos($var,"accessToken") !== false) {
                             return $var[0];
                         }
                     });
+//                    print_r($ckstr);
+//                    die();
                     self::$firephp->fb(urldecode(array_values($ckstr)[0]),
                         'coockie',FirePHP::LOG);
                     preg_match("/accessToken=id=(\d+)&/i", urldecode(array_values($ckstr)[0]), $coockie);
@@ -442,8 +476,10 @@ class ToolsController extends Controller
                         $uid = $coockie[1];
                     }
                 }
-                $data = empty($darr) ? [] : $darr[1];
-                $sUrl = $uarr[1];
+                $data = empty($darr) ? [] : $darr[2];
+//                print_r($uarr);
+//                die();
+                $sUrl = str_replace("'","",$uarr[0]);
                 if (strrpos($uarr[1], "?") !== false) {
                     $sUrl .= "&__flush_cache=1&accessToken=" . $uid;
                 } else {
@@ -454,23 +490,29 @@ class ToolsController extends Controller
             }
 
         } else {
+            if (strrpos($str, "?") !== false) {
+                $str .= "&__flush_cache=1";
+            } else {
+                $str .= "?&__flush_cache=1";
+            }
             $datas = self::toParse($str);
         }
-//        print_r($datas);
-//        exit();
+        if(!isset($datas)){
+            $datas = [];
+        }
+
         return view('tools.fetchApi', $datas);
 //        print_r($_REQUEST);
     }
 
     static function toParse($url, $data = [], $header = [])
     {
-
         $data = self::get_head($url, $data, $header);
-//        print_r($data);
-//        die();
+//        var_dump($data);
+//        die("111111111");
         self::$firephp->fb($data['header'],
             'header',FirePHP::LOG);
-        $docarr = file("/mnt/e/www/server-spring-php-api/config/api.php");
+        $docarr = file("E:/www/server-spring-php-api/config/api.php");
         $handler = "";
 
         foreach ($data['header'] as $key => &$list) {
@@ -520,8 +562,7 @@ class ToolsController extends Controller
         array_multisort($runtime, SORT_DESC, $datas);
 //        print_r($datas);
 //        die();
-//        die();
-        return ['data' => $datas, 'handler' => $handler, 'url' => $url];
+        return ['data' => $datas, 'handler' => $handler, 'url' => $url,'ip'=>$data['ip']];
     }
 
     static function getAllinfo($list, $data, $key)

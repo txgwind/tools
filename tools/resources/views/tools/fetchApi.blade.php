@@ -22,6 +22,7 @@
 <div class="table-wrap">
     @if(isset($url))<h5><a target="_blank" href="{{$url}}">{{$url}}</a></h5>@endif
     @if(isset($handler))<h5>{{$handler}}</h5>@endif
+    @if(isset($ip))<h5>实际url: {{$ip}}</h5>@endif
     <table class="confluenceTable">
         <tbody>
         <tr>
