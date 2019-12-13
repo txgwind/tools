@@ -32,6 +32,8 @@
             <option value="4" >url</option>
             <option value="5" >chareles</option>
             <option value="6" >json</option>
+            <option value="7" >xml</option>
+            <option value="8" >file</option>
         </select>
     </p>
     <p>接口地址：<input style="width:50%" name="api" value="http://api.17k.com/sns/discover/index?clientType=1&cpsOpid=0&_filterData=1&channel=0&_versions=1020&merchant=17Kbdsz&appKey=4037465544&cpsSource=0&platform=2"></p>

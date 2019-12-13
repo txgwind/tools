@@ -289,10 +289,28 @@ class ToolsController extends Controller
                     $data['code'][] = [$key, $list, "是"];
                 }
             }
+        } elseif ($types == 7) {
+            $data['code'][] = ["",$doc,"是"];
+
+        } elseif ($types == 8) {
+
+
+            $xml = trim($doc);
+            //XDEBUG_SESSION_START=11936
+            $url = $request->get('api');
+            $header[] = 'Content-type; text/xml';		#必须声明Content-type为xml
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);		#定义post提交
+            curl_setopt($ch, CURLOPT_HEADER, true);	#定义是否显示header头信息
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);  # HEADER信息
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, false); # false 不显示返回流 true显示返回信息
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); # post的数据
+            echo curl_exec($ch);
+            die();
         }
-//        print_r($data);
-//
-//        exit();
+
+        $data['types'] = $types;
         $data['method'] = $request->get('method');
         $data['api'] = $request->get('api') . ($request->get('params') == "" ? "" : "?") . $request->get('params');
 //        print_r($data);
@@ -368,6 +386,8 @@ class ToolsController extends Controller
         }
         $arr = parse_url($sUrl);
         $host = $arr['host'];
+        self::$firephp->fb(['host'=>$host],
+            'sUrl',FirePHP::LOG);
         $ip = $_GET['toip']?$_GET['toip']:$_GET['ip'];
         $arr['host'] = $ip;
 //        print_r($arr);
@@ -384,10 +404,22 @@ class ToolsController extends Controller
         $header[] = 'X-FirePHP-Encoding: zlib-deflate';
         $header[] = 'X-FirePHP-Version: 0.4.4';
         $header[] = 'X-Wf-Max-Combined-Size: 262144';
-        $header[] = 'Cookie: APP_DEBUG=utPhoIvY$1EzyqBV;';
-        $header[] = "host: $host";
+        $header[] = "Host: $host";
+        $header[] = "Connection: keep-alive";
         if (!empty($headers)) {
             $header = array_merge($header, $headers);
+        }
+        $cookie = false;
+        foreach( $header  as $key=>&$list){
+            if(strrpos($list,"Cookie")!==false){
+                $list = str_replace('&',';',urldecode($list));
+                $list .= ';APP_DEBUG=utPhoIvY$1EzyqBV';
+                $cookie = true;
+            }
+        }
+
+        if(!$cookie){
+            $header[] = 'Cookie: APP_DEBUG=utPhoIvY$1EzyqBV';
         }
         self::$firephp->fb(['url'=>$sUrl,'header'=>$header],
             'sUrl',FirePHP::LOG);
@@ -396,22 +428,20 @@ class ToolsController extends Controller
         curl_setopt($oCurl, CURLOPT_URL, $sUrl);
         curl_setopt($oCurl, CURLOPT_HTTPHEADER, $header);
         if (!empty($data)) {
+            self::$firephp->fb($data,
+                'post',FirePHP::LOG);
             curl_setopt($oCurl, CURLOPT_HTTPGET, 1);
             curl_setopt($oCurl, CURLOPT_POSTFIELDS, is_array($data) ? http_build_query($data) : $data);
         }
 
-
-//        var_dump( $ip);
-//        die();
-//        curl_setopt($oCurl, CURLOPT_RESOLVE,["$host:80:$ip"]);
+        curl_setopt($oCurl, CURLOPT_RESOLVE,["$host:80:$ip"]);
+        curl_setopt($oCurl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($oCurl, CURLOPT_HEADER, true);
         curl_setopt($oCurl, CURLOPT_NOBODY, false);
         curl_setopt($oCurl, CURLOPT_USERAGENT, $user_agent);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($oCurl, CURLOPT_POST, !empty($data) ? true : false);
         $sContent = curl_exec($oCurl);
-//        echo $sContent;
-//        die();
         $headerSize = curl_getinfo($oCurl, CURLINFO_HEADER_SIZE);
 //        die(substr($sContent, 0, $headerSize));
         $body['header'] = explode("|", substr($sContent, 0, $headerSize));
@@ -508,8 +538,6 @@ class ToolsController extends Controller
     static function toParse($url, $data = [], $header = [])
     {
         $data = self::get_head($url, $data, $header);
-//        var_dump($data);
-//        die("111111111");
         self::$firephp->fb($data['header'],
             'header',FirePHP::LOG);
         $docarr = file("E:/www/server-spring-php-api/config/api.php");

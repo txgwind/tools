@@ -83,19 +83,23 @@
     <script src="{{asset('js/clipboard.js')}}"></script>
 </head>
 <body>
-<form id="myform" action="{{$api}}" method="@if($method == 'PUT'){{"post"}}@else{{$method}}@endif" target="_blank">
+<form id="myform"   action="{{$api}}"  method="@if($method == 'PUT'){{"post"}}@else{{$method}}@endif" target="_blank">
     <table>
         @if(!empty($code))
             @foreach($code as $key=>$item)
                 <tr>
                     <td>{{$item[0]}}</td>
-                    <td><input style="width:500px" name="{{$item[0]}}" value="{{$item[1]}}"/></td>
+                    @if($types != 8)
+                    <td><input style="width:500px"  value="{{$item[1]}}"/></td>
+                        @else
+                    <td><input type="file" style="width:500px"  value=""/></td>
+                    @endif
                 </tr>
             @endforeach
         @endif
 
         <tr>
-            <td>  {{ csrf_field() }} @if($method == 'PUT')<input type="hidden" name="_method" value="PUT">@endif<input
+            <td> @if($method == 'PUT')<input type="hidden" name="_method" value="PUT">@endif<input
                     type="submit"/>
                 <input type="button" onclick="toSubmit()" value="onjs"/>
                 <input type="button" ck="0" onclick="fetchApi(this)" value="微服务接口抓取"/>
