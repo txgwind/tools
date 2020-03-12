@@ -90,7 +90,7 @@
                 <tr>
                     <td>{{$item[0]}}</td>
                     @if($types != 8)
-                    <td><input style="width:500px"  value="{{$item[1]}}"/></td>
+                    <td><input name="{{$item[0]}}" style="width:500px"  value="{{urldecode($item[1])}}"/></td>
                         @else
                     <td><input type="file" style="width:500px"  value=""/></td>
                     @endif

@@ -57,7 +57,10 @@
 
         </tbody>
     </table>
-</div><p>输出结果：</p>
+</div>
+    <p>接口示例：</p>
+    <p>  </p>
+    <p>输出结果：</p>
 <table class="wysiwyg-macro" data-macro-name="code" data-macro-parameters="collapse=true" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e2NvZGU6Y29sbGFwc2U9dHJ1ZX0&amp;locale=zh_CN&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tbody><tr><td class="wysiwyg-macro-body"><pre></pre></td></tr></tbody></table>
 </div>
 <h2>+++++++++++++文档结束+++++++++++++</h2>

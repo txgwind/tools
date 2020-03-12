@@ -97,7 +97,7 @@
             <td>
                 控制文件：<select name="data['ctl']" id="controller_name" name="conttroller" onchange="useRote(this)">
                     <option value="">请选择控制器</option>
-                </select> 接口预设: <input style="width:700px" type="text" name="rote_set"
+                </select> 接口预设: <input style="width:700px" type="text" onchange="setRote($('#rote'))"  id="rote_set" name="rote_set"
                                        value="    $route_dispatch->addRoute('{{$code['params']}}', '{{$code['api_address']}}', 'AdController{{'@'}}{{$code['method']}}');"/>
 </td><td>
                 <a style="display:none" href="javascript:insertCode('rote');">插入rote文件</a></td>
@@ -141,24 +141,26 @@ return MobileValidator::check($input, $rules, $messages);
     //{{$code['title']}}
      public function {{$code['method']}}()
     {
-        //分页
-        $page = getInputData('page',1);
-        //每页条数
-        $num = getInputData('count',20);
+         @if($islist == 'on')
+            //分页
+            $page = getInputData('page',1);
+            //每页条数
+            $num = getInputData('count',20);
+         @endif
         // 获取必传参数
         @if(!empty($code['code']['need']))
-@foreach($code['code']['need'] as $key=>$item)
-$search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,@if( strtolower($item[2])=="int" ) true @else false @endif);
+@foreach($code['code']['need'] as $key=>$item)@if($item[4]=="userId")$search['{{$item[4]}}'] = getInputData('_userInfo.id', 0);
+@else$search['{{$item[4]}}'] = getInputData('{{$item[4]}}',@if($item[2] == 'int') 0 @else null @endif ,@if( strtolower($item[2])=="int" ) true @else false @endif );
+@endif
         @endforeach
 @endif @if(!empty($code['code']['noneed']))
 
         // 获取非必传参数
-        @foreach($code['code']['noneed'] as $key=>$item)
-$search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2])=="int"?true:false}});
+@foreach($code['code']['noneed'] as $key=>$item)$search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2])=="int"?true:false}});
         @endforeach
         @endif
-        //调用model获取微服务数据
-        $rs = $this->client->{{$code['method']}}($search,$page, $num);
+//调用model获取微服务数据
+        $rs = $this->client->{{$code['method']}}($search @if($islist == 'on'),$page, $num @endif );
         //判断接口返回值非异常
         if (!is_array($rs)) {
             return Common::showError($rs);
@@ -193,11 +195,13 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
             <td>model:</td>
             <td><textarea id="impl" style="height:180px;width:{{$width}}"  name="data['impl']">
     //{{$code['title']}}
-    public function {{$code['method']}}($search, $page = 1, $num = 20)
+    public function {{$code['method']}}($search @if($islist == 'on'),$page, $num @endif )
     {
+        @if($islist == 'on')
         $search['offset'] = ($page - 1) * $num;
         $search['num'] = $num;
-        return $this->getData('{{strtolower($code['params'])}}', '{{$code['method']}}',$search);
+        @endif
+    return $this->getData('{{strtolower($code['params'])}}', '{{$code['method']}}',$search);
     }
                 </textarea></td><td><a href="javascript:insertCode('impl');">插入model文件</a></td></td>
         </tr>
@@ -255,10 +259,11 @@ $search['{{$item[4]}}'] = getInputData('{{$item[4]}}',null,{{ strtolower($item[2
 
         arr[1] = arr[1].split(":")[0]+":\""+name+"\"";
         $("#config").val(arr.join(","));
-        var link = "http://api.17k.com/"+$('#rote').find("option:selected").text().replace(".php","")+"{{$code['api_address']}}?"+ $('#api_test').attr('v')+"&appKey=4037461542&accessToken=4322&__flush_cache=1";
+        var api = $("#rote_set").val().split(',')[1].replace("'","").replace("'","");
+        var link = "http://api.17k.com/"+$('#rote').find("option:selected").text().replace(".php","")+api+"?"+ $('#api_test').attr('v')+"&appKey=4037461542&accessToken=4322&__flush_cache=1";
         $('#api_test').attr("href",link).text(link);
         var cname = $('#rote').find("option:selected").text().replace(".php","");
-        $("#doc_api").text("/"+cname+$("#doc_api").attr("v"));
+        $("#doc_api").text("/"+$('#rote').find("option:selected").text().replace(".php","").replace(" ","")+api);
 
     }
     function useRote(obj) {

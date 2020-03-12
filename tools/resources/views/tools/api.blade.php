@@ -21,8 +21,9 @@
     <textarea onblur="getMethod(this)" style="width:80%;height:500px" name="doc"></textarea><br><br>
     <input name="act" value="parse" type="hidden">
     @csrf
-    <p>　项目地址：<input style="width:50%" name="root" value="/mnt/e/www/server-spring-php-api/config/route"></p>
+    <p>　项目地址：<input style="width:50%" name="root" value="E:/www/server-spring-php-api/config/route"></p>
     <p>控制层名称：<input id="ctname" style="width:50%" name="ctname" value=""></p>
+    <p>是否分页：<input style="width:20px;height:20px" id="islist" type="checkbox" checked name="islist" value=""></p>
     <input id="submit" type="submit" disabled/>
 </form>
 </body>

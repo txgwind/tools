@@ -87,10 +87,10 @@ class ToolsController extends Controller
         $rote = Util::getRoteArr(ROTE_PATH);
 
         $data["code"] = $code;
-
         $data["api"] = $api;
         $data["rote"] = $rote;
         $data["root"] = $root;
+        $data["islist"] = $request->get('islist');
         $data["act"] = "config";
         $data["width"] = "90%";
 //                print_r($data);
@@ -308,11 +308,24 @@ class ToolsController extends Controller
             curl_setopt($ch, CURLOPT_POSTFIELDS, $xml); # post的数据
             echo curl_exec($ch);
             die();
-        }
+        }else if ($types == 9){
 
+            preg_match("/.*--data \"(.*)\".*--compressed '(.*)'/",$_POST['doc'],$match);
+
+            if(!empty($match)){
+                parse_str($match[1],$arr);
+            }
+            foreach($arr as $key=>$list){
+                $data['code'][] = [$key,$list,'是'];
+            }
+            $data['code'][] = ['accessToken','4322','是'];
+        }
         $data['types'] = $types;
         $data['method'] = $request->get('method');
         $data['api'] = $request->get('api') . ($request->get('params') == "" ? "" : "?") . $request->get('params');
+        if($types == 9){
+            $data['api'] = $match[2];
+        }
 //        print_r($data);
         return view('tools.postparse', $data);
     }
@@ -491,12 +504,16 @@ class ToolsController extends Controller
             $uid = 0;
             if (!empty($uarr)) {
                 if (isset($harr[1][0])) {
-                    $harr[1][2] = urldecode($harr[1][2]);
+                    $harr[1][2] = isset($harr[1][2])? urldecode($harr[1][2]):"";
                     $ckstr = array_filter($harr[1], function ($var) {
                         if (strrpos($var,"accessToken") !== false) {
                             return $var[0];
                         }
                     });
+                    if(!isset($ckstr[0])){
+                        $ckstr = ["accessToken=id=4322"];
+                    }
+                    $test = urldecode(array_values($ckstr)[0]);
 //                    print_r($ckstr);
 //                    die();
                     self::$firephp->fb(urldecode(array_values($ckstr)[0]),
@@ -513,7 +530,7 @@ class ToolsController extends Controller
                 if (strrpos($uarr[1], "?") !== false) {
                     $sUrl .= "&__flush_cache=1&accessToken=" . $uid;
                 } else {
-                    $sUrl .= "?&__flush_cache=1&accessToken=" . $uid;
+                    $sUrl .= "&__flush_cache=1&accessToken=" . $uid;
                 }
 
                 $datas = self::toParse($sUrl, $data, $harr[1]);
