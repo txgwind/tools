@@ -465,7 +465,7 @@ class ToolsController extends Controller
         }
 
 
-        curl_setopt($oCurl, CURLOPT_RESOLVE,["$host:80:$ip"]);
+        curl_setopt($oCurl, 10203,["$host:80:$ip"]);
         curl_setopt($oCurl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($oCurl, CURLOPT_HEADER, true);
         curl_setopt($oCurl, CURLOPT_NOBODY, false);
