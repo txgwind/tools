@@ -395,7 +395,7 @@ class ToolsController extends Controller
     {
 
         if(strrpos($sUrl,"accessToken") === false){
-            $sUrl .= "&accessToken=4322";
+            $sUrl .= strrpos($sUrl,"?") === false?"?accessToken=4322":"&accessToken=4322";
         }
         $arr = parse_url($sUrl);
         $host = $arr['host'];
@@ -403,10 +403,6 @@ class ToolsController extends Controller
             'sUrl',FirePHP::LOG);
         $ip = $_GET['toip']?$_GET['toip']:$_GET['ip'];
         $arr['host'] = $ip;
-//        print_r($arr);
-//        http_build_url();
-//        $sUrl = self::http_build_url($arr);
-//        die();
         $uarr = explode(".com",$sUrl);
         $sUrl = "http://".$ip.$uarr[1];
         self::$firephp->fb(['change->url'=>$sUrl],
@@ -419,6 +415,7 @@ class ToolsController extends Controller
         $header[] = 'X-Wf-Max-Combined-Size: 262144';
         $header[] = "Host: $host";
         $header[] = "Connection: keep-alive";
+        $header[] = "Content-Type: application/x-www-form-urlencoded";
         if (!empty($headers)) {
             $header = array_merge($header, $headers);
         }
@@ -439,13 +436,27 @@ class ToolsController extends Controller
         $user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.146 Safari/537.36";
 
         curl_setopt($oCurl, CURLOPT_URL, $sUrl);
+
+        if(!empty( $header)){
+            foreach($header as $key=>$lt){
+                if(strrpos($lt,"Cookie")!==false){
+//                    $header[$key] = str_replace(";","&",$lt);
+                    $header[$key] = "Cookie: accessToken=id=4322&nickname=%E8%B6%85%E7%AE%A1&avatarUrl=http%3A%2F%2Fcdn.static.17k.com%2Ftest%2Fuser%2Favatar%2F02%2F22%2F43%2F4322.jpg-88x88%3Fv%3D1577696580000&e=1599561412&s=ba2fe46b11800573";
+                }
+            }
+        }
+
         curl_setopt($oCurl, CURLOPT_HTTPHEADER, $header);
+//        curl_setopt($oCurl, CURLOPT_HTTPHEADER, array('X-HTTP-Method-Override:PUT' ));
         if (!empty($data)) {
             self::$firephp->fb($data,
-                'post',FirePHP::LOG);
+                '_____post',FirePHP::LOG);
             curl_setopt($oCurl, CURLOPT_HTTPGET, 1);
-            curl_setopt($oCurl, CURLOPT_POSTFIELDS, is_array($data) ? http_build_query($data) : $data);
+//            curl_setopt($oCurl, CURLOPT_POSTFIELDS, is_array($data) ? http_build_query($data) : $data);
         }
+
+        $put = false;
+        strrpos($_REQUEST['curl'],"-X PUT")!==false && $put = true;
 
         curl_setopt($oCurl, CURLOPT_RESOLVE,["$host:80:$ip"]);
         curl_setopt($oCurl, CURLOPT_FOLLOWLOCATION, true);
@@ -453,8 +464,16 @@ class ToolsController extends Controller
         curl_setopt($oCurl, CURLOPT_NOBODY, false);
         curl_setopt($oCurl, CURLOPT_USERAGENT, $user_agent);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($oCurl, CURLOPT_POST, !empty($data) ? true : false);
+
+        if($put){
+            curl_setopt($oCurl, CURLOPT_CUSTOMREQUEST,"PUT"); //设置请求方式
+            curl_setopt($oCurl, CURLOPT_POSTFIELDS,http_build_query($data));
+        }else{
+            curl_setopt($oCurl, CURLOPT_POST, !empty($data) ? true : false);
+        }
+
         $sContent = curl_exec($oCurl);
+
         $headerSize = curl_getinfo($oCurl, CURLINFO_HEADER_SIZE);
 //        die(substr($sContent, 0, $headerSize));
         $body['header'] = explode("|", substr($sContent, 0, $headerSize));
@@ -480,13 +499,7 @@ class ToolsController extends Controller
 
     public function doServer(Request $request)
     {
-//        $str = '[p\":0,\"isPrime\":0,\"isLong\":0,\"isAuthor\":0,\"isEnabled\":1,\"ip\":\"119.80.181.140\",\"praiseCount\":2,\"stepCount\":0,\"bookId\":0,\"status\":0,\"score\":9,\"createTime\":1572077246000,\"updateTime\":null,\"lastReplyDate\":1572316973000,\"tiketCount\":0,\"content\":null,\"praiseTime\":null,\"primeTime\":null,\"backgroundType\":0,\"isExcuse\":null,\"booksDTO\":null,\"voteDTO\":null,\"authorRecommendDTO\":null,\"extendType\":{\"id\":0,\"name\":\"\u5e38\u89c4\u5e16\"},\"threadRelationTopicDTO\":[],\"colAuthor\":0,\"category\":null,\"groupType\":1,\"groupUserId\":22904660,\"groupIsApproved\":1,\"forBiddenDTO\":{\"id\":null,\"groupId\":null,\"threadId\":null,\"userId\":null,\"managerUserId\":null,\"type\":null,\"isExcuse\":0,\"info\":null,\"startTime\":null,\"endTime\":null,\"createTime\":null,\"updateTime\":null}}]},\"exception\":null,\"sysTime\":1573534947102}","method":"GET","args":{"method":"GET","request_url":"http:\/\/zuul.17k.com\/sns-service\/star\/thread-list?bookId=2864283&userId=58478816&count=3&offset=0&type=0&order=score","header":[],"timeout":5,"cookie":"","redo":0,"maxredirect":2,"post":[],"headOnly":false},"run_time":"302.76"}]';
-//        var_dump(substr( $str,-1));
-//        var_dump($str{0});
-//        die();
-        //        $json = '{"a":1,"b":2,"c":3,"d":4,"e":5';
-//        var_dump(json_decode($json,true));
-//        die();
+
         $str = trim($_REQUEST['curl']);
         if (substr($str, 0, 4) == "curl") {
             $params = $str;
@@ -524,13 +537,17 @@ class ToolsController extends Controller
                     }
                 }
                 $data = empty($darr) ? [] : $darr[2];
-//                print_r($uarr);
-//                die();
+                if(is_string($data)){
+                    $str = $data;
+                    parse_str($str,$data);
+                }
+                self::$firephp->fb($data,
+                    'url-data',FirePHP::LOG);
                 $sUrl = str_replace("'","",$uarr[0]);
                 if (strrpos($uarr[1], "?") !== false) {
                     $sUrl .= "&__flush_cache=1&accessToken=" . $uid;
                 } else {
-                    $sUrl .= "&__flush_cache=1&accessToken=" . $uid;
+                    $sUrl .= "?__flush_cache=1&accessToken=" . $uid;
                 }
 
                 $datas = self::toParse($sUrl, $data, $harr[1]);

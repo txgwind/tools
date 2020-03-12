@@ -8,9 +8,7 @@
 </head>
 <body>
 <form action="/tools/doServer" method="get" enctype="multipart/form-data" >
-    <textarea style="width:80%;height: 500px" name="curl">
-
-    </textarea>
+    <textarea style="width:80%;height: 500px" name="curl"></textarea>
     {{ csrf_field() }}
     <br/>
     <p>域名：<select name="ip">
