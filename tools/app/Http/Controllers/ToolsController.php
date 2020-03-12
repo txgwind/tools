@@ -455,8 +455,15 @@ class ToolsController extends Controller
 //            curl_setopt($oCurl, CURLOPT_POSTFIELDS, is_array($data) ? http_build_query($data) : $data);
         }
 
-        $put = false;
-        strrpos($_REQUEST['curl'],"-X PUT")!==false && $put = true;
+        //请求方法
+        if(strrpos($_REQUEST['curl'],"-X PUT")!==false){
+            $method = 'PUT';
+        }else if(strrpos($_REQUEST['curl'],"-X DELETE")!==false){
+            $method = 'DELETE';
+        }else{
+            $method = 'POST';
+        }
+
 
         curl_setopt($oCurl, CURLOPT_RESOLVE,["$host:80:$ip"]);
         curl_setopt($oCurl, CURLOPT_FOLLOWLOCATION, true);
@@ -465,15 +472,14 @@ class ToolsController extends Controller
         curl_setopt($oCurl, CURLOPT_USERAGENT, $user_agent);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, 1);
 
-        if($put){
-            curl_setopt($oCurl, CURLOPT_CUSTOMREQUEST,"PUT"); //设置请求方式
+        if($method!='POST'){
+            curl_setopt($oCurl, CURLOPT_CUSTOMREQUEST,$method); //设置请求方式
             curl_setopt($oCurl, CURLOPT_POSTFIELDS,http_build_query($data));
         }else{
             curl_setopt($oCurl, CURLOPT_POST, !empty($data) ? true : false);
         }
 
         $sContent = curl_exec($oCurl);
-
         $headerSize = curl_getinfo($oCurl, CURLINFO_HEADER_SIZE);
 //        die(substr($sContent, 0, $headerSize));
         $body['header'] = explode("|", substr($sContent, 0, $headerSize));
@@ -574,7 +580,8 @@ class ToolsController extends Controller
         $data = self::get_head($url, $data, $header);
         self::$firephp->fb($data['header'],
             'header',FirePHP::LOG);
-        $docarr = file("E:/www/server-spring-php-api/config/api.php");
+        $file = env('API_PATH') == null?'/data/web/api.17k.com/config/api.php':env('API_PATH');
+        $docarr = file($file);
         $handler = "";
 
         foreach ($data['header'] as $key => &$list) {
