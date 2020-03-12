@@ -431,8 +431,7 @@ class ToolsController extends Controller
         if(!$cookie){
             $header[] = 'Cookie: APP_DEBUG=utPhoIvY$1EzyqBV';
         }
-        self::$firephp->fb(['url'=>$sUrl,'header'=>$header],
-            'sUrl',FirePHP::LOG);
+
         $user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.146 Safari/537.36";
 
         curl_setopt($oCurl, CURLOPT_URL, $sUrl);
@@ -445,7 +444,8 @@ class ToolsController extends Controller
                 }
             }
         }
-
+        self::$firephp->fb(['url'=>$sUrl,'header'=>$header],
+            'sUrl',FirePHP::LOG);
         curl_setopt($oCurl, CURLOPT_HTTPHEADER, $header);
 //        curl_setopt($oCurl, CURLOPT_HTTPHEADER, array('X-HTTP-Method-Override:PUT' ));
         if (!empty($data)) {
