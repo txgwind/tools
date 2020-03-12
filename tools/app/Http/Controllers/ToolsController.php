@@ -439,11 +439,12 @@ class ToolsController extends Controller
         if(!empty( $header)){
             foreach($header as $key=>$lt){
                 if(strrpos($lt,"Cookie")!==false){
-                    $header[$key] = str_replace(";","&",$lt).";APP_DEBUG=utPhoIvY$1EzyqBV";
+                    $header[$key] = urldecode(str_replace(";","&",$lt).";APP_DEBUG=utPhoIvY$1EzyqBV";
                     //$header[$key] = "Cookie: accessToken=id=4322&nickname=%E8%B6%85%E7%AE%A1&avatarUrl=http%3A%2F%2Fcdn.static.17k.com%2Ftest%2Fuser%2Favatar%2F02%2F22%2F43%2F4322.jpg-88x88%3Fv%3D1577696580000&e=1599561412&s=ba2fe46b11800573";
                 }
             }
         }
+        $header = ["Cookie:APP_DEBUG=utPhoIvY$1EzyqBV"];
         self::$firephp->fb(['url'=>$sUrl,'header'=>$header],
             'sUrl',FirePHP::LOG);
         curl_setopt($oCurl, CURLOPT_HTTPHEADER, $header);
