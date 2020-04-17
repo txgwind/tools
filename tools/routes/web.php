@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,6 +31,20 @@ Route::get('/tools/server', function (){
     return view('tools.apiIndex');
 });
 
+Route::get('/tools/test','ToolsController@test');
+
+Route::get('/tools/java', function (){
+    return view('tools.dto');
+});
+
+Route::post('/tools/createDTO', function (Request $request){
+    $code = $request->get("code");
+    $path = $request->get("path");
+    echo file_put_contents($path,$code);
+});
+
+Route::post('/tools/parseSql','ToolsController@parseSql');
+
 Route::get('/tools/post', function (){
 
 //    echo preg_replace("/{(\w+)}/","","/pay-service/vip/cancel/status/{userId}");
@@ -43,7 +57,7 @@ Route::get('/tools/post', function (){
 Route::post('/tools/postParse','ToolsController@postParse');
 
 Route::post('/tools/insterCode', 'ToolsController@insterCode');
-
+Route::post('/tools/downDto', 'ToolsController@downDto');
 Route::post('/tools/apiresult', 'ToolsController@apiresult');
 Route::post('/tools/fetchApi', 'ToolsController@fetchApi');
 Route::get('/tools/fetchApi', 'ToolsController@fetchApi');

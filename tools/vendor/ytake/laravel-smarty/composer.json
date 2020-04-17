@@ -1,0 +1,77 @@
+{
+  "name": "ytake/laravel-smarty",
+  "description": "Smarty template engine for Laravel and Lumen",
+  "keywords": [
+    "laravel",
+    "smarty",
+    "template",
+    "view",
+    "cache",
+    "lumen"
+  ],
+  "authors": [
+    {
+      "name": "Yuuki Takezawa",
+      "email": "yuuki.takezawa@comnect.jp.net"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.0.0",
+    "illuminate/support": "5.5.*|5.6.*|5.7.*|5.8.*",
+    "illuminate/view": "5.5.*|5.6.*|5.7.*|5.8.*",
+    "illuminate/config": "5.5.*|5.6.*|5.7.*|5.8.*",
+    "illuminate/console": "5.5.*|5.6.*|5.7.*|5.8.*",
+    "illuminate/events": "5.5.*|5.6.*|5.7.*|5.8.*",
+    "smarty/smarty": "^3.1.31"
+  },
+  "require-dev": {
+    "predis/predis": "~1.0",
+    "symfony/framework-bundle": "^3.0",
+    "symfony/console": "^3.0",
+    "phpunit/phpunit": "^5.0",
+    "satooshi/php-coveralls": "*",
+    "phpmd/phpmd": "@stable",
+    "squizlabs/php_codesniffer": "~2.7",
+    "friendsofphp/php-cs-fixer": "^1.11.6",
+    "sebastian/phpcpd": "*",
+    "phploc/phploc": "*",
+    "pdepend/pdepend" : "^2.2.4",
+    "sensiolabs/security-checker": "^4.0.0"
+  },
+  "suggest": {
+    "ext-memcached": "memcached Template Cache Driver",
+    "predis/predis": "Redis Template Cache Driver"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ytake\\LaravelSmarty\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "files": [
+      "tests/SmartyTestCase.php"
+    ]
+  },
+  "scripts": {
+    "md": "php ./vendor/bin/phpmd src text ./phpmd.xml",
+    "quality-assurance": [
+      "php ./vendor/bin/phpunit",
+      "php ./vendor/bin/phpcpd src/"
+    ],
+    "pdepend": "php ./vendor/bin/pdepend  --summary-xml=tests/build/summary.xml --jdepend-chart=tests/quality-assurance/jdepend.svg --overview-pyramid=tests/quality-assurance/pyramid.svg src/",
+    "loc": "php ./vendor/bin/phploc src/ --log-xml=tests/quality-assurance/phploc.xml",
+    "cs": "php ./vendor/bin/php-cs-fixer fix",
+    "phpcs": "./vendor/bin/phpcs src/ --report-full --report-source --standard=PSR2 --colors",
+    "sc": "security-checker security:check ./composer.lock"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Ytake\\LaravelSmarty\\SmartyServiceProvider",
+        "Ytake\\LaravelSmarty\\SmartyConsoleServiceProvider"
+      ]
+    }
+  },  
+  "minimum-stability": "stable"
+}

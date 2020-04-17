@@ -57,5 +57,4 @@ $app->bind('path.public', function() {
 | from the actual running of the application and sending responses.
 |
 */
-
 return $app;

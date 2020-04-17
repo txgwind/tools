@@ -1,0 +1,18 @@
+sudo: false
+language: php
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+services:
+  - redis-server
+  - memcached
+before_script:
+  - composer self-update
+  - composer install --prefer-source
+  - chmod -R 755 tests/bin/memcached.sh
+  - tests/bin/memcached.sh
+script:
+  - chmod -R 777 tests/build
+  - ./vendor/bin/phpunit --coverage-clover tests/build/clover.xml
+  - chmod 777 tests/build/clover.xml

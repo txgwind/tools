@@ -33,6 +33,66 @@ class ToolsController extends Controller
         return view('tools.index', ['user' => '12222']);
     }
 
+
+    /**
+     * Show the profile for the given user.
+     *
+     * @param int $id
+     * @return View
+     */
+    public function dto()
+    {
+        return view('tools.dto', ['user' => '12222']);
+    }
+
+    public function parseSql(Request $request){
+
+        $doc = $request->get("doc");
+        $types = $request->get("types");
+        $path = $request->get("path");
+        $table = "/CREATE TABLE `([\w_]*)`/";
+        preg_match($table,  $doc, $matches);
+        $data['table'] = $matches[1];
+        $data['cla'] = str_replace(" ","",ucwords(str_replace("_"," ",$matches[1]))).($types==1?"DTO":"");
+        $data['cla_name'] = str_replace("DTO","",$data['cla']);
+        $index = strrpos($path,"com");
+        $data['package'] = str_replace(["/","\\"],".",substr($path,$index));
+        $arr  = explode("\r\n", $doc);
+        $parten = "/([\w]+)` (([a-zA-Z]*)\([\d,]*\)|(datetime|TEXT)).*(NULL AUTO_INCREMENT COMMENT|COMMENT|NOT NULL AUTO_INCREMENT)? (.*),/i";
+        foreach($arr as $key=>$list) {
+            $list = trim($list);
+            if ($list{0}=='`') {
+                preg_match($parten, $list, $out);
+                if (!empty($out)) {
+                    $data['fileds'][] = $out;
+                }
+            }
+        }
+//        dd($data);
+//        print_r($data);
+//        die();
+        return \View('tools.dtoview', ['data' => $data,'types'=>$types,"path"=>$path]);
+
+    }
+
+    public function downDto(Request $request)
+    {
+        $code = $request->get("code");
+        $file = $request->get("path");
+        //告诉浏览器这是一个文件流格式的文件
+
+        Header ( "Content-type: application/octet-stream" );
+        //请求范围的度量单位
+
+        Header ( "Accept-Ranges: bytes" );
+        //Content-Length是指定包含于请求或响应中数据的字节长度
+        Header ( "Accept-Length: " . strlen ( $code ) );
+        //用来告诉浏览器，文件是可以当做附件被下载，下载后的文件名称为$file_name该变量的值。
+        Header ( "Content-Disposition: attachment; filename=" . basename($file) );
+        echo $code;
+        die();
+    }
+
     public function parse(Request $request)
     {
         $sql = $request->get("sql");
@@ -40,17 +100,20 @@ class ToolsController extends Controller
         preg_match($table, $sql, $matches);
         $data['table'] = $matches[1];
 
-        $cloum = "/([\w]+)` (([a-zA-Z]*)\([\d]*\)|(datetime|TEXT)).*(NULL AUTO_INCREMENT COMMENT|COMMENT|NOT NULL AUTO_INCREMENT)? (.*),/i";
+        $cloum = "/([\w]+)` (([a-zA-Z]*)\([\d,]*\)|(datetime|TEXT)).*(NULL AUTO_INCREMENT COMMENT|COMMENT|NOT NULL AUTO_INCREMENT)? (.*),/i";
         preg_match_all($cloum, $sql, $matches);
         $data['cloum'] = $matches;
 
-        $cloum = "/.*ENGINE=InnoDB .* COMMENT='(.*)'/i";
+        $cloum = "/.*ENGINE=.* COMMENT='(.*)'/i";
         preg_match($cloum, $sql, $matches);
-        $data['name'] = $matches[1];
+        $data['name'] = isset($matches[1])?$matches[1]:"表";
 
         return view('tools.index', ['data' => $data]);
     }
 
+    public function test(\App $app){
+         return \View::make('tools.test', ['hello','word'=>123,'test'=>[1,2,3,4]]);
+    }
 
     public function sql(Request $request)
     {
@@ -460,8 +523,10 @@ class ToolsController extends Controller
             $method = 'PUT';
         }else if(strrpos($_REQUEST['curl'],"-X DELETE")!==false){
             $method = 'DELETE';
-        }else{
+        }else if(strrpos($_REQUEST['curl'],"--data")!==false){
             $method = 'POST';
+        }else{
+            $method = 'GET';
         }
 
 
@@ -474,11 +539,10 @@ class ToolsController extends Controller
 
         if($method!='POST'){
             curl_setopt($oCurl, CURLOPT_CUSTOMREQUEST,$method); //设置请求方式
-            curl_setopt($oCurl, CURLOPT_POSTFIELDS,http_build_query($data));
         }else{
             curl_setopt($oCurl, CURLOPT_POST, !empty($data) ? true : false);
         }
-
+        curl_setopt($oCurl, CURLOPT_POSTFIELDS,http_build_query($data));
         $sContent = curl_exec($oCurl);
         $headerSize = curl_getinfo($oCurl, CURLINFO_HEADER_SIZE);
 //        die(substr($sContent, 0, $headerSize));
